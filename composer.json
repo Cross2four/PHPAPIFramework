@@ -1,5 +1,16 @@
 {
     "require": {
-        "phpunit/phpunit": "^7.5"
+        "phpunit/phpunit": "^7.5",
+        "vlucas/phpdotenv": "^3.3",
+        "spatie/array-to-xml": "^2.8"
+    },
+    "autoload": {
+        "classmap": ["src/"],
+        "files": ["src/App/Helpers/functions.php"]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "src/Tests"
+        }
     }
 }
