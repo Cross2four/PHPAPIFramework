@@ -5,6 +5,7 @@ namespace App\Storage {
     use App\CustomExceptions\StorageAdapterException;
     use App\Models\Model;
     use PDO;
+    use PDOException;
 
     class PDOStorageAdapter implements IStorageAdapter
     {
@@ -34,8 +35,8 @@ namespace App\Storage {
                 ]);
 
                 $data = $statement->fetch();
-            } catch () {
-
+            } catch (PDOException $e) {
+                throw new StorageAdapterException("There was a problem reading from the Database.", 0, $e);
             }
 
             $newModel->assignFields($data);
@@ -56,7 +57,7 @@ namespace App\Storage {
             }
 
             if (is_null($model->getId())) {
-                $stringQuery = $this::getUpdateQueryString($tableName, $updateStrings, $model->getId());
+                $stringQuery = $this::getUpdateQueryString($updateStrings, $model->getId());
 
                 $statement = $this->pdo->prepare($stringQuery);
 
@@ -68,7 +69,7 @@ namespace App\Storage {
                 }
             }
 
-            $stringQuery = $this::getCreateQueryString($tableName, $updateStrings);
+            $stringQuery = $this::getInsertQueryString($updateStrings);
             $statement = $this->pdo->prepare($stringQuery);
 
             $updateStrings['table'] = $tableName;
