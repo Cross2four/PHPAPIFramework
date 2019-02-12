@@ -10,17 +10,14 @@ use Dotenv\Dotenv;
 $dotenv = Dotenv::create(__DIR__ . "/../..");
 $dotenv->load();
 
-$config = config('response');
+$acceptTypeXml = strpos($_SERVER['HTTP_ACCEPT'], 'xml') !== false;
 
 $response = null;
 
-switch ($config->content_type) {
-    case 'json':
-        $response = ResponseFactory::getResponseObject(ResponseType::JSON);
-        break;
-    case 'xml':
-        $response = ResponseFactory::getResponseObject(ResponseType::XML);
-        break;
+if ($acceptTypeXml) {
+    $response = ResponseFactory::getResponseObject(ResponseType::XML);
+} else {
+    $response = ResponseFactory::getResponseObject(ResponseType::JSON);
 }
 
 $router = new Router($response);
