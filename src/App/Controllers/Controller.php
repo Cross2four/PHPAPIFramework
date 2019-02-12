@@ -2,16 +2,19 @@
 
 namespace App\Controllers {
 
-    use App\Storage\IStorageAdapter;
-    use App\Storage\IStorageAdapterFactory;
+    use App\Responses\IResponse;
     use App\Storage\PDOStorageAdapterFactory;
+    use PDO;
 
     abstract class Controller
     {
-        protected $adapter;
+        private $adapter;
+        private $response;
 
-        public function __construct()
+        public function __construct(IResponse $response)
         {
+            $this->response = $response;
+
             $dbConfig = config('database');
 
             if ($dbConfig->driver == 'mysql' && $dbConfig->db_module == 'pdo') {
@@ -28,6 +31,16 @@ namespace App\Controllers {
             }
 
             // We could create another type of Storage Adapter here if we wanted that used another DB access method.
+        }
+
+        protected function respond(array $data)
+        {
+            return $this->response->getResponse($data);
+        }
+
+        protected function getAdapter()
+        {
+            return $this->adapter;
         }
     }
 }

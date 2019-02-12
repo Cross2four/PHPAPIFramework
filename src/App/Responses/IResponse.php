@@ -4,6 +4,6 @@ namespace App\Responses {
 
     interface IResponse
     {
-        public function getResponse($array);
+        public function getResponse(array $array) : string;
     }
 }

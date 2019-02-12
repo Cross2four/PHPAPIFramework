@@ -9,9 +9,10 @@ namespace App\Responses {
         public function __construct()
         {
             $this->response = [];
+            set_exception_handler([self::class, 'exceptionHandler']);
         }
 
-        public function getResponse($array)
+        public function getResponse(array $array) : string
         {
             try {
                 http_response_code(200);
@@ -24,6 +25,20 @@ namespace App\Responses {
             } finally {
                 return json_encode($this->response);
             }
+        }
+
+        public static function exceptionHandler($e)
+        {
+            header('Content-Type: application/json');
+
+            $response = [
+                'error' => [
+                    'code' => $e->getCode(),
+                    'msg' => $e->getMessage()
+                ]
+            ];
+
+            echo json_encode($response);
         }
     }
 }

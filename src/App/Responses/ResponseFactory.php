@@ -4,9 +4,9 @@ namespace App\Responses {
 
     use InvalidArgumentException;
 
-    class ResponseFactory implements IResponseFactory
+    class ResponseFactory
     {
-        public function getResponseObject($type): IResponse
+        public static function getResponseObject($type): IResponse
         {
             switch ($type) {
                 case ResponseType::JSON:

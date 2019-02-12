@@ -2,6 +2,7 @@
 
 namespace App\Storage {
 
+    use App\CustomExceptions\NotImplementedException;
     use App\CustomExceptions\StorageAdapterException;
     use App\Models\Model;
     use PDO;
@@ -84,6 +85,7 @@ namespace App\Storage {
         public function delete(int $id, $modelClass) : bool
         {
             // TODO: Implement delete() method.
+            throw new NotImplementedException('Method not implemented');
         }
 
         private static function getUpdateQueryString($updateStrings, $id) {

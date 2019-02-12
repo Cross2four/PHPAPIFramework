@@ -2,11 +2,12 @@
 
 namespace App\Routes {
 
-    use App\Controllers\UsersController;
+    use App\Responses\IResponse;
     use InvalidArgumentException;
 
     class Router
     {
+        private $response;
         private $routes = [];
         private $httpMethods = [
             'get',
@@ -17,8 +18,9 @@ namespace App\Routes {
         ];
         private $notFound;
 
-        public function __construct()
+        public function __construct(IResponse $response)
         {
+            $this->response = $response;
             $this->notFound = function($url){
                 echo "404 - $url was not found";
             };
@@ -49,11 +51,11 @@ namespace App\Routes {
 
                     if ($method == strtolower($_SERVER['REQUEST_METHOD'])) {
 
-                        //get any wildcards
+                        //TODO: get any wildcards
 
-                        if( $url == $_SERVER['REQUEST_URI']){
+                        if ($url == $_SERVER['REQUEST_URI']) {
 
-                            if(is_callable($action)) {
+                            if (is_callable($action)) {
                                 return $action();
                             }
 
@@ -61,26 +63,31 @@ namespace App\Routes {
                             $controllerClass = 'App\\Controllers\\' . $actionArr[0];
                             $method = $actionArr[1];
 
-                            $reflectedClass = new \ReflectionClass($controllerClass);
+                            try {
+                                $reflectedClass = new \ReflectionClass($controllerClass);
+                            } catch (\ReflectionException $e) {
+                                throw new InvalidArgumentException("Controller $actionArr[0] does not exist");
+                            }
 
                             if (!$reflectedClass->IsInstantiable()) {
-                                throw new InvalidArgumentException("Controller $actionArr[0] does not exist" );
+                                throw new InvalidArgumentException("Controller $actionArr[0] does not exist");
                             }
 
                             if (!$reflectedClass->hasMethod($method)) {
                                 throw new InvalidArgumentException("Method $method does not exist on controller $actionArr[1]");
                             }
 
-                            $controller = new $controllerClass;;
+                            $controller = new $controllerClass($this->response);
 
                             echo $controller->$method();
-                            return;
+                            return null;
                         }
                     }
                 }
             }
 
             call_user_func_array($this->notFound,[$_SERVER['REQUEST_URI']]);
+            return null;
         }
     }
 }

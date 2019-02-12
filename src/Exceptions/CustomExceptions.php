@@ -11,4 +11,9 @@ namespace App\CustomExceptions {
     {
 
     }
+
+    class NotImplementedException extends \Exception
+    {
+
+    }
 }

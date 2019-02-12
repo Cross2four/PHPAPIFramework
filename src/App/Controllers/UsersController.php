@@ -2,9 +2,6 @@
 
 namespace App\Controllers {
 
-    use App\Responses\ResponseFactory;
-    use App\Responses\ResponseType;
-
     class UsersController extends Controller
     {
         public function index()
@@ -16,9 +13,7 @@ namespace App\Controllers {
                 ]
             ]; // currently mocked
 
-            $responseFactory = new ResponseFactory();
-            $response = $responseFactory->getResponseObject(ResponseType::JSON);
-            return $response->getResponse($data);
+            return $this->respond($data);
         }
     }
 }
